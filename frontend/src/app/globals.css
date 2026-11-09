@@ -320,9 +320,16 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .destination-editor { gap: 9px; margin-top: 24px; padding: 26px; border: 1px solid var(--line); background: var(--surface); }
 .destination-editor label { display: flex; justify-content: space-between; gap: 12px; }
 .destination-editor label span { color: var(--muted); font-size: 11px; font-weight: 400; }
+.destination-fieldset { display: grid; gap: 9px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.destination-fieldset legend { padding: 0; color: var(--ink); font: 600 16px var(--sans); }
+.destination-fieldset + .destination-fieldset { margin-top: 10px; padding-top: 18px; border-top: 1px solid var(--line); }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .form-grid > div { display: grid; gap: 9px; }
 .form-hint { margin: 0; color: var(--muted); font-size: 11px; }
+.destination-advanced { margin-top: 10px; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.destination-advanced summary { color: #c5d3d9; cursor: pointer; font-size: 13px; font-weight: 700; }
+.destination-advanced summary span { margin-left: 6px; color: var(--muted); font-size: 11px; font-weight: 400; }
+.destination-advanced-fields { display: grid; gap: 9px; margin-top: 16px; }
 .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 17px; }
 .admin-detail-description { max-width: 650px; }
 .admin-destination-preview { width: 100%; height: 240px; margin: 22px 0; border-radius: 4px; background-color: #e4ece8; background-position: center; background-size: cover; }
