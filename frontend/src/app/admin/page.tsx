@@ -11,8 +11,22 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [adminEmail, setAdminEmail] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const matchingDestinations = searchQuery
+    ? destinations.filter((destination) =>
+        [
+          destination.name,
+          destination.location,
+          destination.summary,
+          destination.description,
+          destination.category,
+          destination.notes,
+        ].some((value) => value?.toLowerCase().includes(searchQuery.toLowerCase())),
+      )
+    : destinations;
   const categoryCount = new Set(
     destinations.map((destination) => destination.category?.trim().toLowerCase()).filter(Boolean),
   ).size;
@@ -99,11 +113,36 @@ export default function AdminDashboardPage() {
               <div><p className="eyebrow">DESTINATION LIBRARY</p><h2>All places</h2></div>
               <span>{destinations.length} {destinations.length === 1 ? 'place' : 'places'}</span>
             </div>
+            <form
+              className="admin-search"
+              role="search"
+              onSubmit={(event) => {
+                event.preventDefault();
+                setSearchQuery(searchInput.trim());
+              }}
+            >
+              <label className="sr-only" htmlFor="admin-destination-search">Search destinations</label>
+              <input
+                id="admin-destination-search"
+                type="search"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder="Search by destination or location"
+              />
+              <button className="button button-dark" type="submit">Search</button>
+              {searchQuery && (
+                <span className="admin-search-results" aria-live="polite">
+                  {matchingDestinations.length} {matchingDestinations.length === 1 ? 'match' : 'matches'}
+                </span>
+              )}
+            </form>
             <div className="admin-table-wrap">
               <table className="admin-table">
                 <thead><tr><th>DESTINATION</th><th>COORDINATES</th><th>DESCRIPTION</th><th><span className="sr-only">Actions</span></th></tr></thead>
                 <tbody>
-                  {destinations.map((destination, index) => (
+                  {matchingDestinations.length === 0 ? (
+                    <tr><td colSpan={4} className="admin-no-results">No destinations match “{searchQuery}”. Try a different search.</td></tr>
+                  ) : matchingDestinations.map((destination, index) => (
                     <tr key={destination._id}>
                       <td><span className={`table-dot table-dot-${index % 3}`} /><Link className="admin-destination-name" href={`/admin/destinations/${destination._id}`}>{destination.name}</Link></td>
                       <td>{destination.latitude.toFixed(3)}, {destination.longitude.toFixed(3)}</td>

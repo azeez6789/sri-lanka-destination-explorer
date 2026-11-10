@@ -159,7 +159,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .section-heading { display: flex; align-items: end; justify-content: space-between; margin-bottom: 36px; }
 .section-heading h2 { margin: 11px 0 0; font: 600 38px var(--sans); letter-spacing: -.7px; }
 .destination-count { color: var(--muted); font-size: 11px; letter-spacing: 1.5px; }
-.destination-results { margin: -20px 0 22px; color: var(--muted); font-size: 13px; }
+.destination-search { display: flex; width: min(100%, 520px); gap: 9px; margin: -16px 0 22px; }
+.destination-search input, .admin-search input { min-width: 0; height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--ink); font-size: 14px; }
+.destination-search input { flex: 1; }
+.destination-search input::placeholder, .admin-search input::placeholder { color: var(--muted); }
+.destination-search button, .admin-search button { min-height: 44px; padding: 0 18px; border: 0; border-radius: 4px; cursor: pointer; }
+.destination-results { margin: -8px 0 22px; color: var(--muted); font-size: 13px; }
 .destination-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 23px; }
 .destination-card { min-width: 0; overflow: hidden; border: 1px solid rgba(113, 166, 192, .2); border-radius: 12px; background: var(--surface); box-shadow: 0 10px 28px rgba(0, 7, 18, .28), inset 1px 1px 0 rgba(87, 190, 219, .06); transition: transform .25s ease, box-shadow .25s ease; animation: reveal-up .7s cubic-bezier(.2,.7,.2,1) both; }
 .destination-card:nth-child(3n + 2) { animation-delay: .1s; }
@@ -294,6 +299,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .admin-library-heading .eyebrow { margin: 0 0 6px; color: var(--green); font-size: 9px; }
 .admin-library-heading h2 { margin: 0; color: var(--ink); font-size: 21px; font-weight: 600; }
 .admin-library-heading > span { color: #a9bdc7; font-size: 11px; }
+.admin-search { display: flex; align-items: center; gap: 9px; padding: 0 22px 17px; }
+.admin-search input { flex: 1; max-width: 410px; }
+.admin-search-results { color: var(--muted); font-size: 12px; }
+.admin-no-results { text-align: center; }
 .admin-table-wrap { overflow-x: auto; border-top: 1px solid var(--line); background: var(--surface); }
 .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
 .admin-table th { padding: 14px 16px; color: #9ab0bb; background: #10232d; font-size: 9px; font-weight: 700; letter-spacing: 1.1px; }
@@ -383,6 +392,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .section-heading h2 { font-size: 30px; }
   .section-heading .eyebrow { max-width: 210px; font-size: 10px; }
   .destination-count { white-space: nowrap; font-size: 9px; }
+  .destination-search { gap: 7px; }
+  .destination-search input { padding: 0 10px; font-size: 12px; }
+  .destination-search button { padding: 0 13px; }
   .destination-results { margin: -10px 0 18px; font-size: 12px; }
   .destination-grid { grid-template-columns: 1fr; gap: 18px; }
   .destination-image { height: 220px; }
@@ -430,6 +442,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .admin-metric strong { margin-top: 11px; font-size: 27px; }
   .admin-metric-note { margin-top: 7px; font-size: 9px; line-height: 1.35; }
   .admin-library-heading { padding: 17px 15px 14px; }
+  .admin-search { flex-wrap: wrap; padding: 0 15px 15px; }
+  .admin-search input { flex: 1 1 160px; }
   .admin-table td { padding: 14px 12px; }
   .editor-page { width: calc(100% - 36px); padding-top: 30px; }
   .destination-editor { padding: 18px; }

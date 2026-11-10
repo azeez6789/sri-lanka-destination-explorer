@@ -15,9 +15,9 @@ const destinationsPerPage = 10;
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string | string[] }>;
+  searchParams: Promise<{ page?: string | string[]; q?: string | string[] }>;
 }) {
-  const { page: requestedPage } = await searchParams;
+  const { page: requestedPage, q: requestedQuery } = await searchParams;
   let destinations: Destination[] = [];
   let error = '';
 
@@ -33,15 +33,30 @@ export default async function HomePage({
       'We could not load destinations. Check that the backend can connect to MongoDB, then refresh the page.';
   }
 
+  const searchQuery = (Array.isArray(requestedQuery) ? requestedQuery[0] : requestedQuery)?.trim() ?? '';
+  const normalizedQuery = searchQuery.toLowerCase();
+  const matchingDestinations = normalizedQuery
+    ? destinations.filter((destination) =>
+        [
+          destination.name,
+          destination.location,
+          destination.summary,
+          destination.description,
+          destination.category,
+          destination.notes,
+        ].some((value) => value?.toLowerCase().includes(normalizedQuery)),
+      )
+    : destinations;
+
   const requestedPageNumber = Number(
     Array.isArray(requestedPage) ? requestedPage[0] : requestedPage,
   );
-  const pageCount = Math.ceil(destinations.length / destinationsPerPage);
+  const pageCount = Math.ceil(matchingDestinations.length / destinationsPerPage);
   const currentPage = Number.isSafeInteger(requestedPageNumber)
     ? Math.min(Math.max(requestedPageNumber, 1), Math.max(pageCount, 1))
     : 1;
   const firstDestinationIndex = (currentPage - 1) * destinationsPerPage;
-  const visibleDestinations = destinations.slice(
+  const paginatedDestinations = matchingDestinations.slice(
     firstDestinationIndex,
     firstDestinationIndex + destinationsPerPage,
   );
@@ -128,6 +143,17 @@ export default async function HomePage({
             </div>
             <span className="destination-count">{String(destinations.length).padStart(2, '0')} PLACES</span>
           </div>
+          <form className="destination-search" action="/#destinations" role="search">
+            <label className="sr-only" htmlFor="destination-search">Search destinations</label>
+            <input
+              id="destination-search"
+              type="search"
+              name="q"
+              placeholder="Search by destination or location"
+              defaultValue={searchQuery}
+            />
+            <button className="button button-dark" type="submit">Search</button>
+          </form>
 
           {error && <div className="notice notice-error" role="alert">{error}</div>}
           {!error && destinations.length === 0 && (
@@ -135,26 +161,34 @@ export default async function HomePage({
           )}
           {destinations.length > 0 && (
             <>
-              <p className="destination-results" aria-live="polite">
-                Showing {firstDestinationIndex + 1}–
-                {Math.min(firstDestinationIndex + destinationsPerPage, destinations.length)} of{' '}
-                {destinations.length} places
-              </p>
-              <div className="destination-grid">
-                {visibleDestinations.map((destination, index) => (
-                  <DestinationCard
-                    key={destination._id}
-                    destination={destination}
-                    index={firstDestinationIndex + index}
-                  />
-                ))}
-              </div>
+              {matchingDestinations.length === 0 ? (
+                <div className="empty-state" role="status">
+                  No destinations match “{searchQuery}”. Try a different search.
+                </div>
+              ) : (
+                <>
+                  <p className="destination-results" aria-live="polite">
+                    Showing {firstDestinationIndex + 1}–
+                    {Math.min(firstDestinationIndex + destinationsPerPage, matchingDestinations.length)} of{' '}
+                    {matchingDestinations.length} places
+                  </p>
+                  <div className="destination-grid">
+                    {paginatedDestinations.map((destination, index) => (
+                      <DestinationCard
+                        key={destination._id}
+                        destination={destination}
+                        index={firstDestinationIndex + index}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
               {pageCount > 1 && (
                 <nav className="destination-pagination" aria-label="Destination pages">
                   {currentPage > 1 ? (
                     <Link
                       className="pagination-step"
-                      href={`/?page=${currentPage - 1}#destinations`}
+                      href={`/?${searchQuery ? `q=${encodeURIComponent(searchQuery)}&` : ''}page=${currentPage - 1}#destinations`}
                       aria-label="Go to previous destination page"
                     >
                       <span aria-hidden="true">←</span> Previous
@@ -170,7 +204,7 @@ export default async function HomePage({
                       return (
                         <Link
                           key={pageNumber}
-                          href={`/?page=${pageNumber}#destinations`}
+                          href={`/?${searchQuery ? `q=${encodeURIComponent(searchQuery)}&` : ''}page=${pageNumber}#destinations`}
                           className="pagination-page"
                           aria-label={`Go to page ${pageNumber}`}
                           aria-current={pageNumber === currentPage ? 'page' : undefined}
@@ -183,7 +217,7 @@ export default async function HomePage({
                   {currentPage < pageCount ? (
                     <Link
                       className="pagination-step"
-                      href={`/?page=${currentPage + 1}#destinations`}
+                      href={`/?${searchQuery ? `q=${encodeURIComponent(searchQuery)}&` : ''}page=${currentPage + 1}#destinations`}
                       aria-label="Go to next destination page"
                     >
                       Next <span aria-hidden="true">→</span>
